@@ -354,6 +354,23 @@ namespace UniGLTF
             Load(path, bytes);
         }
 
+        public IEnumerator LoadFromWeb(string path, Action callback)
+        {
+            var www = UnityWebRequest.Get(path);
+            yield return www.SendWebRequest();
+            if(www.error == null)
+            {
+                var bytes = www.downloadHandler.data;
+                ParseGlb(bytes);
+                Load();
+                callback?.Invoke();
+            }
+            else
+            {
+                Debug.LogError(www.error);
+            }
+        }
+
         /// <summary>
         /// Parse, Create GameObject
         /// </summary>
